@@ -3,6 +3,7 @@ package itmo.soa_backend.controller;
 import itmo.soa_backend.BusinessLogicException;
 import itmo.soa_backend.dto.LoginRequestDTO;
 import itmo.soa_backend.service.LoginService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class LoginController {
 	private LoginService loginService;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+	public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
 		try {
 			return ResponseEntity.ok(loginService.login(loginRequestDTO));
 		} catch (BusinessLogicException exception) {
@@ -26,7 +27,7 @@ public class LoginController {
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@RequestBody LoginRequestDTO loginRequestDTO) {
+	public ResponseEntity<?> registerUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
 		try {
 			return ResponseEntity.ok(loginService.createUser(loginRequestDTO));
 		} catch (BusinessLogicException exception) {
