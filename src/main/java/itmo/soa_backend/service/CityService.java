@@ -11,6 +11,7 @@ public class CityService {
 	private CityRepository cityRepository;
 	
 	public CityResponseDTO getCities() {
-		return new CityResponseDTO(cityRepository.findAll());
+		CityResponseDTO response = new CityResponseDTO(cityRepository.findAll());
+		return new CityResponseDTO(response.getSafeCities());
 	}
 }
