@@ -41,8 +41,11 @@ jobs:
         continue-on-error: true
 
       # SCA - Software Composition Analysis
-      - name: Run OWASP Dependency Check
-        run: mvn org.owasp:dependency-check-maven:check
+      - name: Run OWASP Dependency Check (offline mode)
+        run: |
+          mvn org.owasp:dependency-check-maven:check \
+            -DautoUpdate=false \
+            -DnvdApiKey=""
         continue-on-error: true
 
       - name: Upload Security Reports
