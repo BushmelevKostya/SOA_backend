@@ -154,6 +154,7 @@
                     <formats>HTML,JSON</formats>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                     <skipTestScope>true</skipTestScope>
+                    <autoUpdate>false</autoUpdate>
                 </configuration>
                 <executions>
                     <execution>

@@ -21,6 +21,7 @@ public class JwtAuthService {
 	private String secret;
 	@Value("${jwt.expiration}")
 	private Long expiration;
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtAuthService.class);
 	
 	private SecretKey getSigningKey() {
 		return Keys.hmacShaKeyFor(secret.getBytes());
@@ -67,7 +68,7 @@ public class JwtAuthService {
 					.parseClaimsJws(token);
 			return true;
 		} catch (JwtException | IllegalArgumentException e) {
-			System.err.println("JWT validation error: " + e.getMessage());
+			log.error("JWT validation error: {}", e.getMessage());
 			return false;
 		}
 	}

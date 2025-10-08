@@ -11,7 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
-    
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtAuthFilter.class);
     private final JwtAuthService jwtAuthService;
     
     public JwtAuthFilter(JwtAuthService jwtAuthService) {
@@ -19,8 +19,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
     
     @Override
-    protected void doFilterInternal(HttpServletRequest request, 
-                                  HttpServletResponse response, 
+    protected void doFilterInternal(HttpServletRequest request,
+                                  HttpServletResponse response,
                                   FilterChain filterChain) throws ServletException, IOException {
         
         String token = jwtAuthService.resolveToken(request.getHeader("Authorization"));
@@ -30,7 +30,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Authentication auth = jwtAuthService.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
-                System.err.println("Cannot set authentication: " + e.getMessage());
+                log.error("Cannot set authentication: {}", e.getMessage());
                 SecurityContextHolder.clearContext();
             }
         }
