@@ -31,21 +31,31 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      # SAST - Static Application Security Testing
+      - name: Run PMD SAST Analysis
+        run: mvn pmd:check
+        continue-on-error: true
+
+      - name: Run Checkstyle Code Analysis
+        run: mvn checkstyle:check
+        continue-on-error: true
+
       # SCA - Software Composition Analysis
       - name: Run OWASP Dependency Check
         run: mvn org.owasp:dependency-check-maven:check
         continue-on-error: true
 
-      - name: Upload Security Report
+      - name: Upload Security Reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: security-reports
           path: |
             target/dependency-check-report.html
-            target/dependency-check-report.json
+            target/pmd.xml
+            target/checkstyle-result.xml
+            target/site/pmd.html
 
-      # Check for outdated dependencies
       - name: Check for dependency updates
         run: mvn versions:display-dependency-updates versions:display-plugin-updates
         continue-on-error: true
