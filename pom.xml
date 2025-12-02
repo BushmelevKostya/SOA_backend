@@ -113,15 +113,17 @@
 
             <!-- SCA: OWASP Dependency-Check -->
             <plugin>
-                <groupId>org.sonatype.ossindex.maven</groupId>
-                <artifactId>ossindex-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>9.0.7</version>
                 <configuration>
-                    <fail>false</fail>
-                    <reportFile>${project.build.directory}/owasp-report.json</reportFile>
+                    <failBuildOnCVSS>11</failBuildOnCVSS>
+                    <formats>
+                        <format>HTML</format>
+                        <format>JSON</format>
+                    </formats>
                 </configuration>
             </plugin>
-
 
         </plugins>
     </build>

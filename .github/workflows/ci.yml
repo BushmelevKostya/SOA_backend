@@ -53,7 +53,7 @@ jobs:
         if: always()
 
   sca:
-    name: SCA - OSS Index
+    name: SCA - OWASP Dependency-Check
     runs-on: ubuntu-latest
     needs: build
 
@@ -68,17 +68,26 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run OSS Index Audit
-        run: mvn clean compile ossindex:audit -B
+      - name: Run OWASP Dependency-Check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn clean compile dependency-check:check -DnvdApiKey=$NVD_API_KEY -B
         continue-on-error: true
 
-      - name: List target directory
+      - name: List reports
         run: ls -la target/
         if: always()
 
-      - name: Upload OSS Index report
+      - name: Upload Dependency-Check HTML report
         uses: actions/upload-artifact@v4
         with:
-          name: ossindex-report
-          path: target/owasp-report.json
+          name: dependency-check-report-html
+          path: target/dependency-check-report.html
+        if: always()
+
+      - name: Upload Dependency-Check JSON report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report-json
+          path: target/dependency-check-report.json
         if: always()
