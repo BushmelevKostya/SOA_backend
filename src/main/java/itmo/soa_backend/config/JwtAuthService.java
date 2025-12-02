@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 
@@ -24,7 +25,7 @@ public class JwtAuthService {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtAuthService.class);
 	
 	private SecretKey getSigningKey() {
-		return Keys.hmacShaKeyFor(secret.getBytes());
+		return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
 	
 	public String generateToken(String username) {

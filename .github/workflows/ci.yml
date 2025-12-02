@@ -7,9 +7,6 @@ on:
     branches: [ main, master, develop ]
 
 jobs:
-  # ===========================================
-  # Сборка
-  # ===========================================
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -28,9 +25,6 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests -B
 
-  # ===========================================
-  # SAST - SpotBugs
-  # ===========================================
   sast:
     name: SAST - SpotBugs
     runs-on: ubuntu-latest
@@ -48,7 +42,7 @@ jobs:
           cache: maven
 
       - name: Run SpotBugs
-        run: mvn compile spotbugs:spotbugs -B
+        run: mvn clean compile spotbugs:spotbugs -B
         continue-on-error: true
 
       - name: Upload SpotBugs report
@@ -58,9 +52,6 @@ jobs:
           path: target/spotbugsXml.xml
         if: always()
 
-  # ===========================================
-  # SCA - OWASP Dependency-Check
-  # ===========================================
   sca:
     name: SCA - OWASP Dependency-Check
     runs-on: ubuntu-latest
@@ -77,13 +68,20 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Build project first
+        run: mvn clean compile -B
+
       - name: Run OWASP Dependency-Check
         run: mvn dependency-check:check -B
         continue-on-error: true
+
+      - name: List target directory
+        run: ls -la target/
+        if: always()
 
       - name: Upload Dependency-Check report
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
-          path: target/dependency-check-report.html
+          path: target/dependency-check-report.*
         if: always()
