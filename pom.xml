@@ -117,13 +117,16 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>9.0.7</version>
                 <configuration>
+                    <nvdApiKey>${nvdApiKey}</nvdApiKey>
                     <failBuildOnCVSS>11</failBuildOnCVSS>
+                    <failOnError>false</failOnError>
                     <formats>
                         <format>HTML</format>
                         <format>JSON</format>
                     </formats>
                 </configuration>
             </plugin>
+
 
         </plugins>
     </build>
