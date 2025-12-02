@@ -26,7 +26,7 @@ public class LoginService {
 		this.passwordEncoder = passwordEncoder;
 		this.jwtAuthService = jwtAuthService;
 	}
-	
+
 	public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
 		Optional<User> userOptional = userRepository.findByUsername(loginRequestDTO.login());
 		

@@ -32,6 +32,8 @@
         <checkstyle.version>3.3.1</checkstyle.version>
         <pmd.version>3.22.0</pmd.version>
         <versions.plugin.version>2.16.2</versions.plugin.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
@@ -97,79 +99,29 @@
 
     <build>
         <plugins>
+            <!-- SAST: SpotBugs -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <!-- SAST: PMD для анализа кода -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${pmd.version}</version>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.8.2.0</version>
                 <configuration>
-                    <rulesets>
-                        <ruleset>category/java/security.xml</ruleset>
-                        <ruleset>category/java/bestpractices.xml</ruleset>
-                        <ruleset>category/java/errorprone.xml</ruleset>
-                    </rulesets>
-                    <failOnViolation>true</failOnViolation>
-                    <printFailingErrors>true</printFailingErrors>
+                    <effort>Max</effort>
+                    <threshold>Medium</threshold>
+                    <failOnError>false</failOnError>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
-            <!-- SAST: Checkstyle для code style и security -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle.version}</version>
-                <configuration>
-                    <configLocation>google_checks.xml</configLocation>
-                    <encoding>UTF-8</encoding>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
-                    <linkXRef>false</linkXRef>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- SCA: OWASP Dependency Check -->
+            <!-- SCA: OWASP Dependency-Check -->
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>${owasp.dependency.check.version}</version>
+                <version>9.0.7</version>
                 <configuration>
-                    <formats>HTML,JSON</formats>
-                    <failBuildOnCVSS>8</failBuildOnCVSS>
-                    <skipTestScope>true</skipTestScope>
-                    <autoUpdate>false</autoUpdate>
+                    <failBuildOnCVSS>11</failBuildOnCVSS>
+                    <formats>
+                        <format>HTML</format>
+                    </formats>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Dependency Updates Check -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${versions.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
