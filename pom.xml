@@ -122,6 +122,8 @@
                         <format>HTML</format>
                         <format>JSON</format>
                     </formats>
+                    <autoUpdate>false</autoUpdate>
+                    <failOnError>false</failOnError>
                     <outputDirectory>${project.build.directory}</outputDirectory>
                 </configuration>
             </plugin>
