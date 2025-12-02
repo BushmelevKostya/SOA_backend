@@ -113,6 +113,6 @@ jobs:
           name: trivy-sca-report
           path: |
             target/trivy-results.sarif
-            target/owasp-report.json
+            target/trivy-report.json
             target/trivy-report.txt
         if: always()
