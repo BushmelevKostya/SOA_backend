@@ -53,7 +53,7 @@ jobs:
         if: always()
 
   sca:
-    name: SCA - OWASP Dependency-Check
+    name: SCA - owasp
     runs-on: ubuntu-latest
     needs: build
 
@@ -68,24 +68,51 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run OWASP Dependency-Check
-        run: mvn clean compile dependency-check:check -DnvdApiKey=${{ secrets.NVD_API_KEY }} -B
+      - name: Build project
+        run: mvn clean compile -B
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'target/trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          scanners: 'vuln,config,secret'
         continue-on-error: true
 
-      - name: List reports
-        run: ls -la target/
+      - name: Convert SARIF to JSON for readability
+        run: |
+          if [ -f target/trivy-results.sarif ]; then
+            cat target/trivy-results.sarif | jq '.' > target/trivy-report.json 2>/dev/null || cp target/trivy-results.sarif target/trivy-report.json
+          fi
+        continue-on-error: true
+
+      - name: Create text report
+        run: |
+          echo "# Trivy Security Scan Results" > target/trivy-report.txt
+          echo "" >> target/trivy-report.txt
+          echo "Scan completed at $(date)" >> target/trivy-report.txt
+          echo "See SARIF file for full details" >> target/trivy-report.txt
+        continue-on-error: true
+
+      - name: Show summary
+        run: |
+          if [ -f target/trivy-results.sarif ]; then
+            echo "✅ Trivy report generated"
+            echo "File size: $(wc -c < target/trivy-results.sarif) bytes"
+          else
+            echo "⚠️ No report generated"
+          fi
         if: always()
 
-      - name: Upload Dependency-Check HTML report
+      - name: Upload Trivy reports
         uses: actions/upload-artifact@v4
         with:
-          name: dependency-check-report-html
-          path: target/dependency-check-report.html
-        if: always()
-
-      - name: Upload Dependency-Check JSON report
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-check-report-json
-          path: target/dependency-check-report.json
+          name: trivy-sca-report
+          path: |
+            target/trivy-results.sarif
+            target/owasp-report.json
+            target/trivy-report.txt
         if: always()
